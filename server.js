@@ -1,12 +1,14 @@
+require("dotenv").load();
+
 var express = require("express"),
-  userController = require("./controllers/userController"),
+  userRoutes = require("./routes/user.routes"),
   app = express(),
   bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api/user", userController);
+app.use("/api/user", userRoutes);
 
 //index route
 app.get("/", function(req, res) {
