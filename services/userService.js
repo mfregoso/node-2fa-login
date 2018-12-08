@@ -1,13 +1,8 @@
-exports.register = (req, resp) => {
+exports.register = body => {
   // email, password, name, phone
   // redirect to page using SMS code to confirm registration
-  let email = req.query.email;
-  let password = req.query.password;
-  if (email && password) {
-    resp.send("got it!");
-  } else {
-    resp.send("error!");
-  }
+  let { email, name } = body;
+  return `Hi ${name}, please check your email at ${email}`;
 };
 
 exports.confirmRegistration = (req, resp) => {

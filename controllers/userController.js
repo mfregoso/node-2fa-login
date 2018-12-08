@@ -1,12 +1,14 @@
 const userService = require("../services/userService");
+const joi = require("joi");
+const validateModel = (input, schema) => !joi.validate(input, schema).error;
 
 exports.register = (req, resp) => {
+  const schema = require("../models/registerUser");
+  let validModel = validateModel(req.body, schema);
   // email, password, name, phone
   // redirect to page using SMS code to confirm registration
-  let email = req.query.email;
-  let password = req.query.password;
-  if (email && password) {
-    resp.send("got it!");
+  if (validModel) {
+    resp.send(userService.register(req.body));
   } else {
     resp.send("error!");
   }
