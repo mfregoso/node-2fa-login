@@ -5,16 +5,16 @@ exports.register = body => {
   return `Hi ${name}, please check your email at ${email}`;
 };
 
-exports.confirmRegistration = (req, resp) => {
+exports.confirmPhone = (req, resp) => {
   // BONUS: enter code from phone, match against database to confirm account
 };
 
-exports.loginOne = (req, resp) => {
+exports.login = (req, resp) => {
   // validate user + pw combo + confirmed account, then create code & send SMS
   // if NOT confirmed, send error
 };
 
-exports.loginTwo = (req, resp) => {
+exports.confirmLogin = (req, resp) => {
   // user enters SMS code, checks against DB to complete signin
 };
 
