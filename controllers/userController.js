@@ -15,6 +15,17 @@ exports.register = (req, resp) => {
   }
 };
 
+exports.verifySms = (req, resp) => {
+  const schema = require("../models/smsCode");
+  let modelError = validateModel(req.body, schema);
+  // BONUS: enter code from phone, match against database to confirm account
+  if (!modelError) {
+    userService.verifySms(req.body, resp);
+  } else {
+    resp.send(modelError);
+  }
+};
+
 exports.confirmPhone = (req, resp) => {
   const schema = require("../models/smsCode");
   let modelError = validateModel(req.body, schema);

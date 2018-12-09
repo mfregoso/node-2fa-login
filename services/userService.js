@@ -1,5 +1,3 @@
-require("dotenv").load();
-
 const DbConn = require("tedious").Connection,
   Request = require("tedious").Request,
   TYPES = require("tedious").TYPES;
@@ -14,11 +12,7 @@ const dbConfig = {
   },
   debug: true
 };
-
-// const sql = new DbConn(dbConfig);
-// sql.on("connect", err =>
-//   err ? console.log(err) : console.log("sql connected!")
-// );
+const twilio = require("./twilioService");
 
 const generateSmsCode = () => {
   let code = Math.floor(Math.random() * 1000000);
@@ -96,6 +90,7 @@ exports.register = (body, resp) => {
         resp.send("Registration error!");
       } else {
         createAcctConfirmationCode(email);
+        twilio.sendSmsCode(phone);
         resp.send("Confirm your account!");
       }
       sql.close();
@@ -108,6 +103,18 @@ exports.register = (body, resp) => {
 
     sql.callProcedure(request);
   });
+};
+
+exports.verifySms = (body, resp) => {
+  // BONUS: enter code from phone, match against database to confirm account
+  const { email, phone, code } = body;
+  let confirmed = twilio.verifySmsCode(phone, code);
+  if (confirmed) {
+    setAccountAsConfirmed(email);
+    resp.send("Account/phone is now confirmed!");
+  } else {
+    resp.send("Incorrect verification code or email");
+  }
 };
 
 exports.confirmPhone = (body, resp) => {
