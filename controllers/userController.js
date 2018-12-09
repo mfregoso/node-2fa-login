@@ -8,7 +8,8 @@ exports.register = (req, resp) => {
   // email, password, name, phone
   // redirect to page using SMS code to confirm registration
   if (!modelError) {
-    resp.send(userService.register(req.body));
+    //resp.send(userService.register(req.body));
+    userService.register(req.body, resp);
   } else {
     resp.send(modelError);
   }
@@ -19,7 +20,7 @@ exports.confirmPhone = (req, resp) => {
   let modelError = validateModel(req.body, schema);
   // BONUS: enter code from phone, match against database to confirm account
   if (!modelError) {
-    resp.send(userService.register(req.body));
+    userService.confirmPhone(req.body, resp);
   } else {
     resp.send(modelError);
   }
@@ -31,7 +32,7 @@ exports.login = (req, resp) => {
   // validate user + pw combo + confirmed account, then create code & send SMS
   // if NOT confirmed, send error
   if (!modelError) {
-    resp.send(userService.register(req.body));
+    userService.login(req.body, resp);
   } else {
     resp.send(modelError);
   }
@@ -42,7 +43,7 @@ exports.loginCode = (req, resp) => {
   let modelError = validateModel(req.body, schema);
   // user enters SMS code, checks against DB to complete signin
   if (!modelError) {
-    resp.send(userService.register(req.body));
+    userService.loginSmsChallenge(req.body, resp);
   } else {
     resp.send(modelError);
   }
