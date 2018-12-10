@@ -1,32 +1,41 @@
-const Client = require("authy-client").Client;
-const authy = new Client({ key: process.env.TWILIO });
-const enums = require("authy-client").enums;
+const axios = require("axios");
 
 exports.sendSmsCode = phoneNum => {
-  authy.startPhoneVerification(
-    {
-      countryCode: "US",
-      locale: "en",
-      phone: phoneNum,
-      via: enums.verificationVia.SMS
+  axios({
+    method: "post",
+    url: "https://api.authy.com/protected/json/phones/verification/start",
+    data: {
+      api_key: process.env.TWILIO,
+      via: "sms",
+      phone_number: phoneNum,
+      country_code: 1,
+      code_length: 5
     },
-    function(err, resp) {
-      if (err) throw err;
-      console.log("Phone information", resp);
+    auth: {
+      username: process.env.TW_SID,
+      password: process.env.TW_KEY
     }
-  );
+  })
+    .then(resp => console.log(resp.data))
+    .catch(err => console.log(err));
 };
 
-exports.verifySmsCode = (phoneNum, code) => {
-  authy.verifyPhone(
-    { countryCode: "US", phone: phoneNum, token: code },
-    function(err) {
-      if (err) {
-        console.log(err);
-        return false;
-      } else return true;
+exports.verifySmsCode = async (phoneNum, code) => {
+  axios({
+    method: "get",
+    url: `https://api.authy.com/protected/json/phones/verification/check?phone_number=${phoneNum}&country_code=1&verification_code=${code}`,
+    headers: {
+      "x-authy-api-key": process.env.TWILIO
     }
-  );
+  })
+    .then(resp => {
+      console.log(resp.data);
+      return resp.data.success;
+    })
+    .catch(err => {
+      console.log(err);
+      return false;
+    });
 };
 
 module.exports = exports;
