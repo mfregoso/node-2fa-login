@@ -20,19 +20,20 @@ const generateSmsCode = () => {
   return code.toString();
 };
 
-const createAcctConfirmationCode = email => {
+const sqlCreateAcctConfirmationCode = email => {
   const sql = new DbConn(dbConfig);
   sql.on("connect", err => {
+    let code = generateSmsCode();
+
     const request = new Request("RegisterCode_Insert", procErr => {
       if (procErr) {
         console.log(procErr);
       } else {
-        console.log("create acct/phone code success... call twilio!");
+        console.log("Self-token stored in SQL, verify: " + code);
       }
       sql.close();
     });
 
-    let code = generateSmsCode();
     request.addParameter("Email", TYPES.VarChar, email);
     request.addParameter("Code", TYPES.VarChar, code);
 
@@ -89,7 +90,7 @@ exports.register = (body, resp) => {
       if (procErr) {
         resp.send("Registration error!");
       } else {
-        createAcctConfirmationCode(email);
+        sqlCreateAcctConfirmationCode(email);
         twilio.sendSmsCode(phone);
         resp.send("Confirm your account!");
       }
