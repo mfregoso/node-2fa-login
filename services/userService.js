@@ -200,7 +200,9 @@ exports.verifyLoginTwilio = (body, resp) => {
   twilio.verifySmsCode(phone, code).then(data => {
     let confirmed = data.success | false;
     if (confirmed) {
-      resp.send(email + " is fully logged in!");
+      var jwt = require("jsonwebtoken");
+      var token = jwt.sign({ data: email }, "shhhhh", { expiresIn: "1d" });
+      resp.send(token);
     } else {
       resp.send("Incorrect verification credentials");
     }
@@ -218,7 +220,13 @@ exports.loginSmsChallenge = (body, resp) => {
         console.log(procErr);
       } else {
         if (codeMatchesDatabase) {
-          resp.send("Fully logged in!");
+          var jwt = require("jsonwebtoken");
+          // var date = new Date();
+
+          // // add a day
+          // date.setDate(date.getDate() + 1);
+          var token = jwt.sign({ data: email }, "shhhhh", { expiresIn: "1d" });
+          resp.send(token);
         } else {
           resp.send("Incorrect verification code or email");
         }
@@ -237,5 +245,8 @@ exports.loginSmsChallenge = (body, resp) => {
     sql.callProcedure(request);
   });
 };
+
+// expires 1 day
+// email
 
 module.exports = exports;
