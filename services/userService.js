@@ -105,16 +105,18 @@ exports.register = (body, resp) => {
   });
 };
 
-exports.verifySms = (body, resp) => {
+exports.verifyAccountTwilio = (body, resp) => {
   // BONUS: enter code from phone, match against database to confirm account
   const { email, phone, code } = body;
-  let confirmed = twilio.verifySmsCode(phone, code);
-  if (confirmed) {
-    setAccountAsConfirmed(email);
-    resp.send("Account/phone is now confirmed!");
-  } else {
-    resp.send("Incorrect verification code or email");
-  }
+  twilio.verifySmsCode(phone, code).then(data => {
+    let confirmed = data.success || false;
+    if (confirmed) {
+      setAccountAsConfirmed(email);
+      resp.send("Account/phone is now confirmed!");
+    } else {
+      resp.send("Incorrect verification code or email");
+    }
+  });
 };
 
 exports.confirmPhone = (body, resp) => {
@@ -156,13 +158,14 @@ exports.login = (body, resp) => {
   const sql = new DbConn(dbConfig);
   sql.on("connect", err => {
     let acctIsConfirmed = false;
+    let phone;
     const request = new Request("Account_Login", procErr => {
       if (procErr) {
         console.log(procErr);
       } else {
         if (acctIsConfirmed) {
           createLoginCode(email);
-          console.log("send login SMS with Twilio");
+          twilio.sendSmsCode(phone);
           resp.send("Proceed to login SMS challenge");
         } else if (acctIsConfirmed === null) {
           resp.send("Incorrect login information");
@@ -181,8 +184,25 @@ exports.login = (body, resp) => {
     request.on("returnValue", function(paramName, value) {
       acctIsConfirmed = value;
     });
+    request.addOutputParameter("Phone", TYPES.VarChar);
+    request.on("returnValue", function(paramName, value) {
+      phone = value;
+    });
 
     sql.callProcedure(request);
+  });
+};
+
+exports.verifyLoginTwilio = (body, resp) => {
+  // BONUS: enter code from phone, match against database to confirm account
+  const { email, phone, code } = body;
+  twilio.verifySmsCode(phone, code).then(data => {
+    let confirmed = data.success | false;
+    if (confirmed) {
+      resp.send(email + " is fully logged in!");
+    } else {
+      resp.send("Incorrect verification credentials");
+    }
   });
 };
 

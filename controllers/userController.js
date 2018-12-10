@@ -15,12 +15,12 @@ exports.register = (req, resp) => {
   }
 };
 
-exports.verifySms = (req, resp) => {
+exports.verifyAccountTwilio = (req, resp) => {
   const schema = require("../models/smsCode");
   let modelError = validateModel(req.body, schema);
   // BONUS: enter code from phone, match against database to confirm account
   if (!modelError) {
-    userService.verifySms(req.body, resp);
+    userService.verifyAccountTwilio(req.body, resp);
   } else {
     resp.send(modelError);
   }
@@ -44,6 +44,17 @@ exports.login = (req, resp) => {
   // if NOT confirmed, send error
   if (!modelError) {
     userService.login(req.body, resp);
+  } else {
+    resp.send(modelError);
+  }
+};
+
+exports.verifyLoginTwilio = (req, resp) => {
+  const schema = require("../models/smsCode");
+  let modelError = validateModel(req.body, schema);
+  // BONUS: enter code from phone, match against database to confirm account
+  if (!modelError) {
+    userService.verifyLoginTwilio(req.body, resp);
   } else {
     resp.send(modelError);
   }
