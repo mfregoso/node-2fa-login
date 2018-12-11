@@ -9,7 +9,10 @@ const schema = {
     .string()
     .regex(/^[0-9]{4,6}$/)
     .required(),
-  phone: joi.string().regex(/^[0-9]{10,11}$/)
+  phone: joi
+    .string()
+    .regex(/^[0-9]{10,11}$/)
+    .required()
 };
 
 module.exports = joi.object().keys(schema);
