@@ -29,7 +29,7 @@ const sqlCreateAcctConfirmationCode = email => {
       if (procErr) {
         console.log(procErr);
       } else {
-        console.log("Self-token stored in SQL, verify: " + code);
+        console.log("Own challenge token stored in SQL, verify: " + code);
       }
       sql.close();
     });
@@ -80,7 +80,6 @@ const setAccountAsConfirmed = email => {
 };
 
 exports.register = (body, resp) => {
-  // email, password, name, phone
   // redirect to page using SMS code to confirm registration
   let { email, name, password, phone } = body;
 
@@ -107,7 +106,7 @@ exports.register = (body, resp) => {
 };
 
 exports.verifyAccountTwilio = (body, resp) => {
-  // BONUS: enter code from phone, match against database to confirm account
+  // enter code from phone, call twilio api to verify
   const { email, phone, code } = body;
   twilio.verifySmsCode(phone, code).then(data => {
     let confirmed = data.success || false;
@@ -195,13 +194,13 @@ exports.login = (body, resp) => {
 };
 
 exports.verifyLoginTwilio = (body, resp) => {
-  // BONUS: enter code from phone, match against database to confirm account
+  // enter code from phone, call twilio api to verify
   const { email, phone, code } = body;
   twilio.verifySmsCode(phone, code).then(data => {
     let confirmed = data.success | false;
     if (confirmed) {
-      var jwt = require("jsonwebtoken");
-      var token = jwt.sign({ data: email }, "shhhhh", { expiresIn: "1d" });
+      const jwt = require("jsonwebtoken");
+      let token = jwt.sign({ data: email }, "ssssssecret", { expiresIn: "1d" });
       resp.send(token);
     } else {
       resp.send("Incorrect verification credentials");
@@ -220,13 +219,11 @@ exports.loginSmsChallenge = (body, resp) => {
         console.log(procErr);
       } else {
         if (codeMatchesDatabase) {
-          var jwt = require("jsonwebtoken");
-          // var date = new Date();
-
-          // // add a day
-          // date.setDate(date.getDate() + 1);
-          var token = jwt.sign({ data: email }, "shhhhh", { expiresIn: "1d" });
-          resp.send(token);
+          const jwt = require("jsonwebtoken");
+          let token = jwt.sign({ data: email }, "ssssssecret", {
+            expiresIn: "1d"
+          });
+          resp.send("Fully logged in " + token);
         } else {
           resp.send("Incorrect verification code or email");
         }
@@ -245,8 +242,5 @@ exports.loginSmsChallenge = (body, resp) => {
     sql.callProcedure(request);
   });
 };
-
-// expires 1 day
-// email
 
 module.exports = exports;
