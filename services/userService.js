@@ -1,6 +1,7 @@
 const DbConn = require("tedious").Connection,
   Request = require("tedious").Request,
   TYPES = require("tedious").TYPES;
+
 const dbConfig = {
   server: "localhost",
   userName: process.env.DB_USER,
@@ -12,6 +13,7 @@ const dbConfig = {
   },
   debug: true
 };
+
 const twilio = require("./twilioService");
 
 const generateSmsCode = () => {

@@ -8,7 +8,6 @@ exports.register = (req, resp) => {
   // email, password, name, phone
   // redirect to page using SMS code to confirm registration
   if (!modelError) {
-    //resp.send(userService.register(req.body));
     userService.register(req.body, resp);
   } else {
     resp.send(modelError);
@@ -18,7 +17,7 @@ exports.register = (req, resp) => {
 exports.verifyAccountTwilio = (req, resp) => {
   const schema = require("../models/smsCode");
   let modelError = validateModel(req.body, schema);
-  // BONUS: enter code from phone, match against database to confirm account
+  
   if (!modelError) {
     userService.verifyAccountTwilio(req.body, resp);
   } else {
