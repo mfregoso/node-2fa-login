@@ -108,6 +108,7 @@ exports.register = (body, resp) => {
 };
 
 exports.verifyAccountTwilio = (body, resp) => {
+  // TO DO: query DB accounts for matching email + phone first
   // enter code from phone, call twilio api to verify
   const { email, phone, code } = body;
   twilio.verifySmsCode(phone, code).then(data => {
