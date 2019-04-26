@@ -5,7 +5,7 @@ exports.sendSmsCode = async phoneNum =>
     method: "post",
     url: "https://api.authy.com/protected/json/phones/verification/start",
     data: {
-      api_key: process.env.TWILIO,
+      api_key: process.env.TW_KEY,
       via: "sms",
       phone_number: phoneNum,
       country_code: 1,
@@ -30,7 +30,7 @@ exports.verifySmsCode = async (phoneNum, code) =>
     method: "get",
     url: `https://api.authy.com/protected/json/phones/verification/check?phone_number=${phoneNum}&country_code=1&verification_code=${code}`,
     headers: {
-      "x-authy-api-key": process.env.TWILIO
+      "x-authy-api-key": process.env.TW_KEY
     }
   })
     .then(resp => {

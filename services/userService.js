@@ -91,7 +91,7 @@ exports.register = (body, resp) => {
       if (procErr) {
         resp.send("Registration error!");
       } else {
-        sqlCreateAcctConfirmationCode(email);
+        //sqlCreateAcctConfirmationCode(email); // deprecated
         twilio.sendSmsCode(phone);
         resp.send("Confirm your account!");
       }
