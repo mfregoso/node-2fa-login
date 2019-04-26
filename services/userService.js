@@ -159,36 +159,31 @@ exports.login = (body, resp) => {
   const { email, password } = body;
   const sql = new DbConn(dbConfig);
   sql.on("connect", err => {
-    let acctIsConfirmed = false;
-    let phone;
+    const account = {IsConfirmed: null, Phone: null};
     const request = new Request("Account_Login", procErr => {
       if (procErr) {
         console.log(procErr);
       } else {
-        if (acctIsConfirmed) {
+        const {IsConfirmed, Phone} = account;
+        if (IsConfirmed) {
           createLoginCode(email);
-          twilio.sendSmsCode(phone);
+          twilio.sendSmsCode(Phone);
           resp.send("Proceed to login SMS challenge");
-        } else if (acctIsConfirmed === null) {
+        } else if (IsConfirmed === null) {
           resp.send("Incorrect login information");
-        } else {
-          // maybe generate a new sms code?
+        } else { // maybe generate a new sms code?
           resp.send("Must verify phone/account before logging in");
         }
       }
-
       sql.close();
     });
 
     request.addParameter("Email", TYPES.VarChar, email);
     request.addParameter("Password", TYPES.VarChar, password);
     request.addOutputParameter("IsConfirmed", TYPES.Bit);
-    request.on("returnValue", function(paramName, value) {
-      acctIsConfirmed = value;
-    });
     request.addOutputParameter("Phone", TYPES.VarChar);
     request.on("returnValue", function(paramName, value) {
-      phone = value;
+      account[paramName] = value;
     });
 
     sql.callProcedure(request);
