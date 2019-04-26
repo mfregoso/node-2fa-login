@@ -1,5 +1,5 @@
   # Node 2FA Login
-A Node-Express back end for Two Factor user registration and login authentication with SMS verification using Twilio, persistent storage with SQL Server and JSON Web Tokens.
+A Node-Express Two Factor Authentication back end for user registration and login with SMS verification provided by Twilio, persistent storage with SQL Server and JSON Web Tokens.
 
 **Extra Endpoint:** POST /test for "string to cut" feature
 
