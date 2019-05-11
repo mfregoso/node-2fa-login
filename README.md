@@ -1,16 +1,12 @@
   # Node 2FA Login
 A Node-Express Two Factor Authentication back end for user registration and login with SMS verification provided by Twilio, persistent storage with SQL Server and JSON Web Tokens.
 
-**Extra Endpoint:** POST /test for "string to cut" feature
-
 ## Getting Started
-/test endpoint will work straight out of the box, but the user flow endpoints will require a Twilio account and an instance of SQL Server with authentication mode enabled.
+User flow endpoints will require a Twilio account and an instance of SQL Server with authentication mode enabled.
 
 ### Prerequisites for User Flow
 ````
-SQL Server (local, but can be configured with external)
-
-SQL Server: Username + Password
+SQL Server
 
 Twilio: API Key + SID
 ````
@@ -45,9 +41,6 @@ node server.js
 ## API Endpoints and Schema
 - **Server will be listening on port 3000**
 - **Use POST for all endpoints**
-
-### /test
-- **string_to_cut**: string
 
 ### /api/user/register
 - **name**: string (min 3 char, required)
